@@ -1,0 +1,47 @@
+<div class="preview">
+  <div class="preview__tabs" dir="rtl">
+    <button
+      type="button"
+      class="preview__tab"
+      [class.is-active]="tab() === 'html'"
+      (click)="setTab('html')"
+    >
+      HTML
+    </button>
+    <button
+      type="button"
+      class="preview__tab"
+      [class.is-active]="tab() === 'css'"
+      (click)="setTab('css')"
+    >
+      CSS
+    </button>
+  </div>
+
+  <div class="preview__editors" dir="ltr">
+    @if (tab() === 'html') {
+      <textarea
+        class="preview__input"
+        [value]="localHtml()"
+        (input)="onHtmlInput($event)"
+        spellcheck="false"
+        aria-label="محرر HTML"
+      ></textarea>
+    } @else {
+      <textarea
+        class="preview__input"
+        [value]="localCss()"
+        (input)="onCssInput($event)"
+        spellcheck="false"
+        aria-label="محرر CSS"
+      ></textarea>
+    }
+  </div>
+
+  <div class="preview__frame-wrap" dir="rtl">
+    <div class="preview__frame-label">المعاينة</div>
+    @if (previewUrl(); as url) {
+      <iframe class="preview__frame" [src]="url" title="معاينة HTML/CSS"></iframe>
+    }
+  </div>
+</div>

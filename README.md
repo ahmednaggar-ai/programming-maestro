@@ -1,59 +1,143 @@
-# ProgrammingSimulator
+# مايسترو كود — مستر حسام النجار
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.1.5.
+منصة تعليم تفاعلية بالعربي لتدريس أساسيات **JavaScript** (مع دروس HTML/CSS) لطلاب المدارس، بهوية **المايسترو حسام النجار** — مدير عام بوزارة التربية والتعليم.
 
-## Development server
+كل درس بأسلوب Tutorial:
 
-To start a local development server, run:
+1. شرح  
+2. سؤال فهم  
+3. تمرين كود (أو معاينة HTML/CSS)  
+4. درجة محفوظة  
+
+وعند الغلط يظهر زر **«إيه المشكلة؟»** بتلميح بالعامية المصرية.
+
+---
+
+## المميزات
+
+- **40 درسًا** موزعة على وحدات منهجية (مقدمة → while)
+- محرر JavaScript مع تشغيل فوري ونافذة نتائج
+- مراجعات فهم (أسئلة اختيار من متعدد)
+- دروس HTML/CSS مع معاينة مباشرة
+- نظام درجات وتقدّم محفوظ في المتصفح (`localStorage`)
+- ثيمين: **فاتح** و**داكن**
+- واجهة RTL بالكامل بهوية ذهبية/كحلية
+
+---
+
+## التشغيل
+
+### المتطلبات
+
+- Node.js (يفضّل LTS حديث)
+- npm
+
+### التثبيت والتشغيل
+
+```bash
+npm install
+npm start
+```
+
+أو:
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+ثم افتح: [http://localhost:4200/](http://localhost:4200/)
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### البناء للإنتاج
 
 ```bash
-ng generate component component-name
+npm run build
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+الملفات تظهر في مجلد `dist/`.
+
+### الاختبارات
 
 ```bash
-ng generate --help
+npm test
 ```
 
-## Building
+---
 
-To build the project run:
+## هيكل المشروع (مختصر)
 
-```bash
-ng build
+```
+src/app/
+  core/
+    data/
+      lessons.ts          # تجميع كل الدروس
+      units/              # وحدات المنهج (unit-01 … unit-10)
+      lesson-helpers.ts   # مساعدات بناء الدروس
+    models/lesson.model.ts
+    services/
+      code-runner.service.ts   # تشغيل وفحص كود JS
+      progress.service.ts      # الدرجات والتقدّم
+      theme.service.ts         # light / dark
+  features/
+    lessons-list/         # الصفحة الرئيسية + الوحدات
+    lesson/               # شاشة الدرس التفاعلي
+    playground/           # المحرر الحر
+  shared/
+    code-editor/
+    console-output/
+    preview-pane/         # معاينة HTML/CSS
+    brand-logo/           # شعار المايسترو
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+---
 
-## Running unit tests
+## وحدات المنهج
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+| الوحدة | المحتوى |
+|--------|---------|
+| المقدمة | `console.log` |
+| الأساسيات | متغيرات، حساب، نصوص + مراجعة |
+| الشروط | `if` / `else if` / `else` + مراجعة |
+| منطق وتكرار | `&&` `\|\|` و `for` + مراجعة |
+| الدوال والأنواع والمصفوفات | تعريف دالة، `typeof`، مصفوفات |
+| HTML & CSS (1) | هيكل وتنسيق أساسي + مراجعة |
+| متقدم (1) | شروط، تكرار، دوال + مراجعة |
+| تكرار ومصفوفات | جمع، `length`، `for...of` |
+| دوال ومخطط | `return`، مخطط انسيابي، HTML/CSS (2) |
+| switch و while | `switch`، `%`، `const`، `!==`، `while` |
 
-```bash
-ng test
-```
+---
 
-## Running end-to-end tests
+## إضافة درس جديد
 
-For end-to-end (e2e) testing, run:
+1. أضف الدرس في الملف المناسب داخل `src/app/core/data/units/`
+2. استخدم المساعدات من `lesson-helpers.ts` (`codingLesson` / `quizLesson` / `htmlCssLesson`)
+3. تأكد أن الوحدة مستوردة في `lessons.ts`
+4. اكتب تلميح `dialectHint` بالعامية المصرية لزر «إيه المشكلة؟»
 
-```bash
-ng e2e
-```
+---
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+## التقنيات
 
-## Additional Resources
+- Angular 22
+- TypeScript
+- SCSS
+- Vitest (اختبارات الوحدة)
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+---
+
+## الهوية
+
+- الاسم الظاهر: **مستر حسام النجار — المايسترو**
+- المسمى: مدير عام بوزارة التربية والتعليم
+- الشعار: `public/brand/maestro-logo.svg`
+
+---
+
+## ملاحظات
+
+- تشغيل كود الطالب يتم في المتصفح بشكل محدود تعليميًا (مش بيئة إنتاج معزولة بالكامل).
+- التقدّم محلي على الجهاز؛ مسح بيانات الموقع يعيد الدرجات من الصفر.
+
+---
+
+جميع الحقوق محفوظة © الهوية البصرية لمستر حسام النجار (المايسترو)

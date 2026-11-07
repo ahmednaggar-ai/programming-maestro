@@ -1,0 +1,42 @@
+<section class="playground">
+  <header class="playground__top">
+    <a class="back" routerLink="/">← كل الدروس</a>
+    <h1>المحرر الحر</h1>
+    <p>اكتب أي كود JavaScript وجرّبه فوراً بدون تحديات.</p>
+  </header>
+
+  <div class="playground__layout">
+    <div class="playground__editor">
+      <app-code-editor
+        [value]="code()"
+        label="محرر JavaScript"
+        (valueChange)="onCodeChange($event)"
+        (runRequest)="runCode()"
+      />
+    </div>
+
+    <div class="playground__side">
+      <div class="playground__actions">
+        <button type="button" class="btn btn--primary" (click)="runCode()">تشغيل</button>
+        <button type="button" class="btn btn--ghost" (click)="clearOutput()">مسح النتائج</button>
+        <button type="button" class="btn btn--ghost" (click)="resetCode()">إعادة تعيين</button>
+      </div>
+
+      <div class="playground__console">
+        <app-console-output
+          [logs]="runResult()?.logs ?? []"
+          [error]="runResult()?.error ?? null"
+        />
+      </div>
+
+      <aside class="tips">
+        <h2>نصائح سريعة</h2>
+        <ul>
+          <li>استخدم <code>console.log()</code> لطباعة النتائج</li>
+          <li>اضغط <kbd>Ctrl</kbd> + <kbd>Enter</kbd> للتشغيل السريع</li>
+          <li>Tab يضيف مسافتين للمسافة البادئة</li>
+        </ul>
+      </aside>
+    </div>
+  </div>
+</section>

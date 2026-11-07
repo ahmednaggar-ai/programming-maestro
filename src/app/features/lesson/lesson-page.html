@@ -1,0 +1,200 @@
+@if (lesson(); as lesson) {
+  <section class="lesson">
+    <header class="lesson__top">
+      <a class="back" routerLink="/">← كل الدروس</a>
+      <div class="lesson__meta">
+        <span class="badge">الدرس {{ lesson.order }}</span>
+        <span class="badge badge--soft">{{ lesson.level }}</span>
+        <span class="badge badge--soft">{{ lesson.maxScore }} درجة</span>
+      </div>
+      <p class="lesson__unit">{{ lesson.unit }}</p>
+      <h1>{{ lesson.title }}</h1>
+      <p class="lesson__summary">{{ lesson.summary }}</p>
+
+      <ol class="steps" aria-label="مراحل الدرس">
+        <li [class.is-active]="stage() === 'explain'" [class.is-done]="stage() !== 'explain'">1. الشرح</li>
+        <li [class.is-active]="stage() === 'quiz'" [class.is-done]="stage() === 'practice' || stage() === 'done'">2. الفهم</li>
+        <li [class.is-active]="stage() === 'practice'" [class.is-done]="stage() === 'done'">3. التطبيق</li>
+        <li [class.is-active]="stage() === 'done'">4. الدرجة</li>
+      </ol>
+    </header>
+
+    @if (stage() === 'explain') {
+      <div class="panel">
+        <h2>الشرح</h2>
+        <ul class="points">
+          @for (point of lesson.explanation; track point) {
+            <li>{{ point }}</li>
+          }
+        </ul>
+
+        @if (lesson.exampleCode) {
+          <button type="button" class="btn btn--ghost" (click)="toggleExample()">
+            {{ showExample() ? 'إخفاء المثال' : 'عرض مثال' }}
+          </button>
+          @if (showExample()) {
+            <div class="example">
+              <app-code-editor [value]="lesson.exampleCode" [readonly]="true" label="مثال" />
+            </div>
+          }
+        }
+
+        <div class="panel__actions">
+          <button type="button" class="btn btn--accent" (click)="goExplainNext()">
+            {{ hasQuiz() ? 'يلا على سؤال الفهم' : 'يلا على التمرين' }}
+          </button>
+        </div>
+      </div>
+    }
+
+    @if (stage() === 'quiz' && currentQuestion(); as question) {
+      <div class="panel">
+        <h2>سؤال الفهم {{ quizIndex() + 1 }} / {{ lesson.quiz!.length }}</h2>
+        <p class="quiz-prompt">{{ question.prompt }}</p>
+        <div class="choices">
+          @for (choice of question.choices; track choice; let i = $index) {
+            <button
+              type="button"
+              class="choice"
+              [class.is-selected]="selectedChoice() === i"
+              (click)="selectChoice(i)"
+              [disabled]="!!quizFeedback()"
+            >
+              {{ choice }}
+            </button>
+          }
+        </div>
+
+        <div class="panel__actions">
+          @if (!quizFeedback()) {
+            <button
+              type="button"
+              class="btn btn--accent"
+              (click)="submitQuizAnswer()"
+              [disabled]="selectedChoice() === null"
+            >
+              تأكيد الإجابة
+            </button>
+          } @else {
+            <button type="button" class="btn btn--primary" (click)="nextQuizOrPractice()">
+              {{ quizIndex() + 1 < lesson.quiz!.length ? 'السؤال التالي' : isQuizOnly() ? 'عرض الدرجة' : 'روح للتمرين' }}
+            </button>
+            @if (!quizFeedback()!.ok) {
+              <button type="button" class="btn btn--ghost" (click)="revealQuizHint()">
+                إيه المشكلة؟
+              </button>
+            }
+          }
+        </div>
+
+        @if (quizFeedback(); as fb) {
+          <div class="feedback" [class.feedback--ok]="fb.ok" [class.feedback--bad]="!fb.ok">
+            <strong>{{ fb.ok ? 'صح عليك!' : 'لسه غلط' }}</strong>
+            <p>{{ fb.text }}</p>
+            @if (!fb.ok && showQuizHint()) {
+              <p class="dialect">{{ question.explainWrong }}</p>
+            }
+          </div>
+        }
+      </div>
+    }
+
+    @if (stage() === 'practice') {
+      <div class="lesson__grid">
+        <aside class="panel panel--teach">
+          <h2>التحدي</h2>
+          <p class="challenge-text">{{ lesson.challenge }}</p>
+        </aside>
+
+        <div class="workspace">
+          @if (isPreviewLesson()) {
+            <div class="workspace__editor workspace__editor--tall">
+              <app-preview-pane
+                [html]="html()"
+                [css]="css()"
+                (htmlChange)="onHtmlChange($event)"
+                (cssChange)="onCssChange($event)"
+              />
+            </div>
+          } @else {
+            <div class="workspace__editor">
+              <app-code-editor
+                [value]="code()"
+                label="اكتب كودك هنا"
+                (valueChange)="onCodeChange($event)"
+                (runRequest)="runCode()"
+              />
+            </div>
+            <div class="workspace__output">
+              <app-console-output
+                [logs]="runResult()?.logs ?? []"
+                [error]="runResult()?.error ?? null"
+              />
+            </div>
+          }
+
+          <div class="workspace__actions">
+            @if (!isPreviewLesson()) {
+              <button type="button" class="btn btn--primary" (click)="runCode()">تشغيل</button>
+            }
+            <button type="button" class="btn btn--accent" (click)="checkPractice()">
+              تحقق من الإجابة
+            </button>
+            <button type="button" class="btn btn--ghost" (click)="resetPractice()">
+              إعادة تعيين
+            </button>
+          </div>
+
+          @if (practiceMessage(); as msg) {
+            <div
+              class="feedback"
+              [class.feedback--ok]="practicePassed()"
+              [class.feedback--bad]="!practicePassed()"
+            >
+              <strong>{{ practicePassed() ? 'نجح التحدي!' : 'حاول مرة تانية' }}</strong>
+              <p>{{ msg }}</p>
+
+              @if (!practicePassed() && dialectHint()) {
+                <button type="button" class="btn btn--ghost" (click)="revealDialect()">
+                  إيه المشكلة؟
+                </button>
+                @if (showDialect()) {
+                  <p class="dialect">{{ dialectHint() }}</p>
+                }
+              }
+
+              @if (practicePassed()) {
+                <button type="button" class="btn btn--primary" (click)="completeAfterPractice()">
+                  سجّل الدرجة وكمل
+                </button>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    @if (stage() === 'done') {
+      <div class="panel panel--done">
+        <h2>أحسنت يا بطل!</h2>
+        <p class="score-line">
+          درجتك في الدرس ده:
+          <strong>{{ earnedScore() }}</strong>
+          /
+          {{ lesson.maxScore }}
+        </p>
+        <div class="panel__actions">
+          @if (nextLessonId()) {
+            <a class="btn btn--accent" [routerLink]="['/lesson', nextLessonId()]">الدرس التالي ←</a>
+          }
+          <a class="btn btn--primary" routerLink="/">قائمة الدروس</a>
+        </div>
+      </div>
+    }
+  </section>
+} @else {
+  <section class="missing">
+    <h1>الدرس مش موجود</h1>
+    <a routerLink="/" class="btn btn--primary">العودة للرئيسية</a>
+  </section>
+}

@@ -1,0 +1,65 @@
+<section class="page">
+  <header class="hero">
+    <div class="hero__logo">
+      <app-brand-logo variant="full" />
+    </div>
+
+    <div class="hero__copy">
+      <p class="eyebrow">منصة تعلم تفاعلية</p>
+      <h1>مستر حسام النجار</h1>
+      <p class="tagline">المايسترو</p>
+      <p class="role">مدير عام بوزارة التربية والتعليم</p>
+      <p class="lead">
+        منهج Tutorial كامل: شرح، سؤال فهم، تمرين كود، ودرجة لكل خطوة — بالعامية لما تحتاج تلميح.
+      </p>
+      <a class="btn btn--accent" routerLink="/playground">افتح المحرر الحر</a>
+    </div>
+  </header>
+
+  <section class="progress-card" aria-label="التقدّم">
+    <div class="progress-card__top">
+      <h2>تقدّمك في المنهج</h2>
+      <p>
+        {{ completedCount() }} / {{ totalLessons }} درس مكتمل ·
+        {{ totalEarned() }} / {{ totalPossible() }} درجة
+      </p>
+    </div>
+    <div class="progress-bar" role="progressbar" [attr.aria-valuenow]="progressPercent()" aria-valuemin="0" aria-valuemax="100">
+      <span [style.width.%]="progressPercent()"></span>
+    </div>
+  </section>
+
+  @for (group of units; track group.unit) {
+    <section class="unit">
+      <div class="section-head">
+        <h2>{{ group.unit }}</h2>
+        <p>{{ group.lessons.length }} خطوة</p>
+      </div>
+
+      <ol class="lessons">
+        @for (lesson of group.lessons; track lesson.id) {
+          <li>
+            <a class="lesson-link" [routerLink]="['/lesson', lesson.id]">
+              <span class="lesson-link__order">{{ lesson.order }}</span>
+              <span class="lesson-link__body">
+                <span class="lesson-link__title">
+                  {{ lesson.title }}
+                  @if (isCompleted(lesson.id)) {
+                    <span class="done-mark">✓</span>
+                  }
+                </span>
+                <span class="lesson-link__summary">{{ lesson.summary }}</span>
+              </span>
+              <span class="lesson-link__meta">
+                <span class="lesson-link__level">{{ lesson.level }}</span>
+                <span class="lesson-link__score">
+                  {{ lessonScore(lesson.id) }}/{{ lesson.maxScore }}
+                </span>
+              </span>
+            </a>
+          </li>
+        }
+      </ol>
+    </section>
+  }
+</section>

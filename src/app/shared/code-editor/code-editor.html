@@ -1,0 +1,29 @@
+<div class="editor" dir="ltr">
+  <div class="editor__bar">
+    <span class="editor__label">{{ label() }}</span>
+    <span class="editor__hint">Ctrl + Enter للتشغيل</span>
+  </div>
+
+  <div class="editor__body">
+    <div class="editor__gutter" #gutter aria-hidden="true">
+      @for (n of lineNumbers(); track n) {
+        <span>{{ n }}</span>
+      }
+    </div>
+
+    <textarea
+      #textarea
+      class="editor__input"
+      [value]="localValue()"
+      [readOnly]="readonly()"
+      [attr.aria-label]="label()"
+      spellcheck="false"
+      autocomplete="off"
+      autocorrect="off"
+      autocapitalize="off"
+      (input)="onInput($event)"
+      (scroll)="onScroll()"
+      (keydown)="onKeydown($event)"
+    ></textarea>
+  </div>
+</div>

@@ -1,0 +1,17 @@
+<section class="console" dir="ltr" aria-live="polite">
+  <header class="console__bar" dir="rtl">
+    <span>النتائج</span>
+  </header>
+
+  <div class="console__body">
+    @if (error()) {
+      <p class="console__error">{{ error() }}</p>
+    } @else if (logs().length === 0) {
+      <p class="console__empty" dir="rtl">{{ emptyText() }}</p>
+    } @else {
+      @for (line of logs(); track $index) {
+        <pre class="console__line"><span class="console__prompt">&gt;</span> {{ line }}</pre>
+      }
+    }
+  </div>
+</section>
