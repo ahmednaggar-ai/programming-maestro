@@ -25,15 +25,23 @@
   border-radius: 0 0 1.5rem 1.5rem;
 }
 
-.hero__logo {
-  background: var(--logo-card-bg);
-  border: 1px solid var(--logo-card-border);
+.hero__photo {
   border-radius: 1.25rem;
-  padding: 1rem 0.75rem 0.5rem;
-  box-shadow:
-    var(--logo-card-shadow),
-    inset 0 1px 0 rgba(251, 191, 36, 0.12);
+  overflow: hidden;
+  border: 1px solid var(--logo-card-border);
+  box-shadow: var(--logo-card-shadow);
+  background: var(--navy-950);
   animation: float-logo 4s ease-in-out infinite;
+  aspect-ratio: 4 / 5;
+  max-height: 420px;
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+  }
 }
 
 .hero__copy {
@@ -245,7 +253,7 @@
     grid-template-columns: 1fr;
   }
 
-  .hero__logo {
+  .hero__photo {
     max-width: 420px;
     margin-inline: auto;
   }

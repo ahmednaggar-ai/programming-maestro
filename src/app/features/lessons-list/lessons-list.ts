@@ -2,12 +2,11 @@ import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { LESSONS, getLessonsByUnit } from '../../core/data/lessons';
 import { ProgressService } from '../../core/services/progress.service';
-import { BrandLogo } from '../../shared/brand-logo/brand-logo';
 
 @Component({
   selector: 'app-lessons-list',
   standalone: true,
-  imports: [RouterLink, BrandLogo],
+  imports: [RouterLink],
   templateUrl: './lessons-list.html',
   styleUrl: './lessons-list.scss',
 })
